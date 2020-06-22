@@ -1,28 +1,6 @@
 <template>
   <div class="home">
-    <div class="container mx-auto">
-      <div class="flex mt-8 h-10 rounded-full shadow-lg ">
-        <input
-          type="text"
-          placeholder="Type name here..."
-          v-model="name"
-          class="flex-1 rounded-l-full pl-4 outline-none border-r"
-        />
-        <v-select
-          v-model="gender"
-          class="bg-white w-64"
-          placeholder="Choose gender"
-          :options="genders"
-        ></v-select>
-        <button
-          class="bg-green-500 text-white px-8 hover:bg-green-400 rounded-r-full"
-          @click="handleClick(name, gender)"
-        >
-          Search
-        </button>
-      </div>
-    </div>
-
+    <Searchbar v-on:handleChange="handleClick" />
     <div v-if="characters" class="mt-8 md:grid md:grid-cols-4 md:gap-8 container mx-auto z-10">
       <div v-for="character of characters" :key="character.id">
         <Character :character="character" />
@@ -33,21 +11,19 @@
 
 <script>
 import Character from "@/components/Character.vue";
-import vSelect from "vue-select";
+import Searchbar from "@/components/Searchbar.vue";
 import axios from "axios";
 
 export default {
   name: "Home",
   components: {
     Character,
-    vSelect,
+    Searchbar,
   },
 
   data() {
     return {
       characters: null,
-      name: "",
-      gender: "",
       error: false,
       isLoading: false,
       genders: ["Female", "Male", "Genderless", "Unknown"],
