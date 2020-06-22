@@ -1,18 +1,112 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="container mx-auto">
+      <div class="flex mt-8 h-10 rounded-full shadow-lg ">
+        <input
+          type="text"
+          placeholder="Type name here..."
+          v-model="name"
+          class="flex-1 rounded-l-full pl-4 outline-none border-r"
+        />
+        <v-select
+          v-model="gender"
+          class="bg-white w-64"
+          placeholder="Choose gender"
+          :options="genders"
+        ></v-select>
+        <button
+          class="bg-green-500 text-white px-8 hover:bg-green-400 rounded-r-full"
+          @click="handleClick(name, gender)"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div v-if="characters" class="mt-8 md:grid md:grid-cols-4 md:gap-8 container mx-auto z-10">
+      <div v-for="character of characters" :key="character.id">
+        <Character :character="character" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import Character from "@/components/Character.vue";
+import vSelect from "vue-select";
+import axios from "axios";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    HelloWorld,
+    Character,
+    vSelect,
+  },
+
+  data() {
+    return {
+      characters: null,
+      name: "",
+      gender: "",
+      error: false,
+      isLoading: false,
+      genders: ["Female", "Male", "Genderless", "Unknown"],
+    };
+  },
+
+  methods: {
+    handleClick(name, gender) {
+      const params = {
+        name: name || null,
+        gender: gender || null,
+      };
+
+      this.fetchCharacters(params);
+    },
+
+    async fetchCharacters(params) {
+      try {
+        this.isLoading = true;
+        const { data } = await axios.get("https://rickandmortyapi.com/api/character/", {
+          params: params || null,
+        });
+        this.isLoading = false;
+        this.characters = data.results;
+      } catch (err) {
+        console.log(err);
+        this.isLoading = false;
+        this.error = err;
+        this.characters = null;
+      }
+    },
+  },
+
+  created() {
+    this.fetchCharacters();
   },
 };
 </script>
+<style>
+.vs__dropdown-toggle input::placeholder {
+  color: theme("colors.gray.500");
+}
+
+.vs__search::placeholder,
+.vs__dropdown-toggle,
+.vs__dropdown-menu {
+  min-height: 100%;
+  border: none;
+}
+
+.vs__dropdown-option--highlight {
+  background: theme("colors.green.500");
+}
+.vs__dropdown-menu {
+  top: 100%;
+}
+
+.vs__clear,
+.vs__open-indicator {
+  fill: theme("colors.gray.600");
+}
+</style>
