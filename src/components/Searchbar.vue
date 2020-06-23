@@ -15,7 +15,7 @@
       ></v-select>
       <button
         class="bg-green-500 text-white px-8 hover:bg-green-400 rounded-r-full"
-        @click="$emit('handleChange', name, gender)"
+        @click="$emit('change', name, gender)"
       >
         Search
       </button>
@@ -31,7 +31,6 @@ export default {
   components: {
     vSelect,
   },
-
   data() {
     return {
       name: "",

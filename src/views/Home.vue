@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Searchbar v-on:handleChange="handleClick" />
+    <Searchbar v-on:change="handleSearch" />
     <div v-if="characters" class="mt-8 md:grid md:grid-cols-4 md:gap-8 container mx-auto z-10">
       <div v-for="character of characters" :key="character.id">
         <Character :character="character" />
@@ -12,7 +12,7 @@
 <script>
 import Character from "@/components/Character.vue";
 import Searchbar from "@/components/Searchbar.vue";
-import axios from "axios";
+import characterService from "@/services/character";
 
 export default {
   name: "Home",
@@ -20,7 +20,6 @@ export default {
     Character,
     Searchbar,
   },
-
   data() {
     return {
       characters: null,
@@ -29,9 +28,11 @@ export default {
       genders: ["Female", "Male", "Genderless", "Unknown"],
     };
   },
-
+  created() {
+    this.fetchCharacters();
+  },
   methods: {
-    handleClick(name, gender) {
+    handleSearch(name, gender) {
       const params = {
         name: name || null,
         gender: gender || null,
@@ -39,13 +40,10 @@ export default {
 
       this.fetchCharacters(params);
     },
-
     async fetchCharacters(params) {
       try {
         this.isLoading = true;
-        const { data } = await axios.get("https://rickandmortyapi.com/api/character/", {
-          params: params || null,
-        });
+        const { data } = await characterService.getCharacters(params);
         this.isLoading = false;
         this.characters = data.results;
       } catch (err) {
@@ -56,12 +54,9 @@ export default {
       }
     },
   },
-
-  created() {
-    this.fetchCharacters();
-  },
 };
 </script>
+
 <style>
 .vs__dropdown-toggle input::placeholder {
   color: theme("colors.gray.500");
