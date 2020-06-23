@@ -10,6 +10,11 @@
 <script>
 export default {
   name: "Character",
-  props: ["character"],
+  props: {
+    character: {
+      type: Object,
+      required: true,
+    },
+  },
 };
 </script>
