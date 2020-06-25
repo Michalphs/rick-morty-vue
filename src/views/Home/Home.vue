@@ -9,11 +9,20 @@
         <Character :character="character" />
       </div>
     </div>
+    <Pagination
+      v-if="info && Object.keys(info).length > 0"
+      v-on:change="handleChangePage"
+      :count="info.count"
+      :next="info.next"
+      :pages="info.pages"
+      :prev="info.prev"
+    />
   </div>
 </template>
 
 <script>
 import characterService from "@/services/character";
+import Pagination from "@/components/Pagination.vue";
 import Character from "./components/Character.vue";
 import Searchbar from "./components/Searchbar.vue";
 
@@ -22,12 +31,14 @@ export default {
   components: {
     Character,
     Searchbar,
+    Pagination,
   },
   data() {
     return {
       characters: null,
       error: false,
       isLoading: false,
+      info: null,
       genders: ["Female", "Male", "Genderless", "Unknown"],
     };
   },
@@ -43,12 +54,17 @@ export default {
 
       this.fetchCharacters(params);
     },
+    handleChangePage(page) {
+      console.log(page);
+      this.fetchCharacters({ page });
+    },
     async fetchCharacters(params) {
       try {
         this.isLoading = true;
         const { data } = await characterService.getCharacters(params);
         this.isLoading = false;
         this.characters = data.results;
+        this.info = data.info;
       } catch (err) {
         console.log(err);
         this.isLoading = false;
