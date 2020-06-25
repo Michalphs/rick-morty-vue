@@ -1,7 +1,10 @@
 <template>
   <div class="home">
     <Searchbar v-on:change="handleSearch" />
-    <div v-if="characters" class="mt-8 md:grid md:grid-cols-4 md:gap-8 container mx-auto z-10">
+    <div
+      v-if="characters"
+      class="mt-8 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-8 container mx-auto z-10"
+    >
       <div v-for="character of characters" :key="character.id">
         <Character :character="character" />
       </div>
@@ -10,9 +13,9 @@
 </template>
 
 <script>
-import Character from "@/components/Character.vue";
-import Searchbar from "@/components/Searchbar.vue";
 import characterService from "@/services/character";
+import Character from "./components/Character.vue";
+import Searchbar from "./components/Searchbar.vue";
 
 export default {
   name: "Home",
